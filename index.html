@@ -69,6 +69,12 @@ nav ul a:hover{color:var(--or)}
 .t3{background-color:#d9d5cc;background-image:linear-gradient(#0002 1px,transparent 1px),linear-gradient(90deg,#0002 1px,transparent 1px);background-size:40px 40px}
 .t3 svg{stroke:#2a2e33!important}
 .t4{background:linear-gradient(160deg,#ff7a1a,#9c3f00)}
+.svc-cat{margin:34px 0 14px;font-size:1.2rem}#svc .svc-cat:first-child{margin-top:0}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.sc{display:flex;gap:14px;align-items:flex-start;background:var(--bg);border:1px solid #ffffff12;border-radius:14px;padding:16px;transition:.25s}
+.sc:hover{transform:translateY(-4px);border-color:var(--or)}
+.sc .e{font-size:1.6rem;line-height:1;flex:none;width:46px;height:46px;display:grid;place-items:center;background:var(--bg2);border-radius:12px}
+.sc h4{font-size:1rem;margin-bottom:4px}.sc p{color:var(--mut);font-size:.88rem;line-height:1.45}
 /* CALCULADORA */
 .calc{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
 @media(max-width:860px){.calc{grid-template-columns:1fr}.calc .panel{position:static}}
@@ -184,12 +190,7 @@ footer a:hover{color:var(--or)}
 <section id="servicos"><div class="wrap">
   <h2>O que eu <span>faço</span></h2>
   <p class="sub">Da base da obra ao toque final, com material bem aplicado e mão de obra qualificada.</p>
-  <div class="grid">
-    <div class="card"><div class="img t1"><svg viewBox="0 0 64 64" fill="none" stroke-width="3" stroke-linejoin="round"><rect x="6" y="14" width="52" height="12"/><rect x="6" y="26" width="52" height="12"/><rect x="6" y="38" width="52" height="12"/></svg></div><div><h3>Alvenaria Estrutural e Fundação</h3><p>Valas, alicerces, pilares, lajes e paredes com precisão de prumo e nível.</p></div></div>
-    <div class="card"><div class="img t2"><svg viewBox="0 0 64 64" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 54 38 26M30 14l8-8 20 20-8 8z"/><path d="M8 56l6-14 8 8z"/></svg></div><div><h3>Reformas Residenciais e Comerciais</h3><p>Demolição controlada, mudança de layout e ampliações sem bagunça.</p></div></div>
-    <div class="card"><div class="img t3"><svg viewBox="0 0 64 64" fill="none" stroke-width="3"><rect x="8" y="8" width="22" height="22"/><rect x="34" y="8" width="22" height="22"/><rect x="8" y="34" width="22" height="22"/><rect x="34" y="34" width="22" height="22"/></svg></div><div><h3>Acabamento Fino</h3><p>Porcelanato, azulejos, pastilhas, pedras e rejunte perfeito.</p></div></div>
-    <div class="card"><div class="img t4"><svg viewBox="0 0 64 64" fill="none" stroke-width="3" stroke-linejoin="round"><path d="M32 6C20 22 14 30 14 40a18 18 0 0 0 36 0C50 30 44 22 32 6z"/></svg></div><div><h3>Manutenção e Impermeabilização</h3><p>Tratamento de infiltrações, trincas e umidade com garantia de serviço.</p></div></div>
-  </div>
+  <div id="svc"></div>
 </div></section>
 
 <!-- CALCULADORA -->
@@ -271,35 +272,50 @@ const WA_DISPLAY = "(00) 00000-0000";
 
 /* ============ DADOS DA CALCULADORA ============ */
 const CATS = [
- ["🧱","Estrutura e Alvenaria Bruta",[
-  ["Abertura de valas e valetas","Escavação manual do solo para preparar o terreno onde serão moldadas as bases"],
-  ["Montagem de fundações e alicerces","Preparação e concretagem de sapatas, blocos e vigas de baldrame"],
-  ["Levantamento de paredes","Assentamento de tijolos, blocos de concreto ou cerâmicos"],
-  ["Montagem e concretagem de lajes","Posicionamento de vigotas, lajotas e preenchimento com concreto"],
-  ["Moldagem de pilares e colunas","Criação de fôrmas e preenchimento com concreto armado"],
-  ["Instalação de contravergas e vergas","Fixação de vigas sobre e sob os vãos de portas e janelas"]]],
- ["🏠","Revestimento e Preparação de Superfícies",[
-  ["Aplicação de chapisco","Primeira camada de argamassa para aderência"],
-  ["Execução de emboço","Camada intermediária para nivelar e regularizar a superfície"],
-  ["Aplicação de reboco","Camada final de acabamento para pintura ou massa corrida"],
-  ["Construção de contrapiso","Camada aplicada sobre laje ou solo para nivelar o chão"],
-  ["Fazer calçadas e passeios","Preparação, concretagem e acabamento externo"]]],
- ["✨","Acabamentos e Revestimentos Finos",[
-  ["Assentamento de pisos cerâmicos e porcelanatos","Alinhamento, colagem e rejunte"],
-  ["Colocação de azulejos e pastilhas","Revestimento de paredes internas, banheiros e cozinhas"],
-  ["Instalação de pedras decorativas","Fixação de filetes, canjiquinha ou mármores"],
-  ["Chumbamento de portas e janelas","Fixação firme de batentes e esquadrias"]]],
- ["🛠️","Reformas, Manutenção e Infraestrutura",[
-  ["Demolição de paredes e estruturas","Quebra controlada para modificação de layout"],
-  ["Abertura de roços","Cortes na parede para tubulações de água, esgoto e conduítes"],
-  ["Reparo de infiltrações e trincas","Tratamento de umidade e fechamento de fissuras"],
-  ["Construção de muros de arrimo","Paredes reforçadas para conter terra em declives"],
-  ["Instalação de caixas de inspeção e esgoto","Montagem de caixas de passagem e gordura"]]]
+ ["📐","Planejamento e Preparação",[
+  ["Leitura e interpretação de plantas e projetos","Entendimento de projetos arquitetônicos e estruturais para executar cada etapa conforme o desenho","📖"],
+  ["Marcação de obra e gabarito","Locação de eixos e marcação de paredes e alicerces no terreno","📏"],
+  ["Preparação do canteiro de obras","Organização de materiais, ferramentas e segurança básica","🚧"],
+  ["Preparo de argamassas, massas e concretos","Dosagem correta de cimento, areia, brita e água","🪣"],
+  ["Operação de equipamentos básicos","Betoneiras, serras elétricas, vibradores de concreto e ferramentas manuais","⚙️"]]],
+ ["🧱","Fundação e Estrutura",[
+  ["Escavação de valas manuais","Valas para sapatas e baldrames, preparando o terreno para as bases","⛏️"],
+  ["Execução de fundações simples","Alicerces, vigas baldrame e sapatas","🏗️"],
+  ["Montagem de caixarias e formas","Fôrmas de madeira ou metal para concretagem","🪵"],
+  ["Armação e posicionamento de ferragens","Estruturas básicas de ferro e aço, quando não há armador exclusivo","🔩"],
+  ["Concretagem de lajes, pilares, vigas e escadas","Montagem, lançamento e acabamento do concreto armado","🏢"]]],
+ ["🏠","Alvenaria e Fechamentos",[
+  ["Assentamento da primeira fiada","Alinhamento, nível e esquadro das paredes desde a base","📐"],
+  ["Erguimento de paredes e muros","Tijolos cerâmicos, blocos de concreto ou pedras","🧱"],
+  ["Instalação de vergas e contravergas","Vigas sobre e sob os vãos de portas e janelas","🚪"],
+  ["Elementos vazados (cobogós) e divisórias","Execução de cobogós e divisórias em alvenaria","🔲"],
+  ["Abertura de rasgos em paredes","Passagem de conduítes e tubulações elétricas e hidráulicas","🔌"]]],
+ ["🪣","Revestimentos e Acabamentos Grossos",[
+  ["Aplicação de chapisco","Camada inicial de aderência em paredes e tetos","🟫"],
+  ["Emboço e massa única","Nivelamento e regularização da parede","🧰"],
+  ["Execução de reboco","Camada fina de acabamento para pintura","🖌️"],
+  ["Execução de contrapiso","Regularização da base para receber os pisos","⬜"],
+  ["Impermeabilização de áreas úmidas","Produtos asfálticos ou argamassas poliméricas em banheiros, cozinhas e baldrames","💧"]]],
+ ["✨","Acabamentos Finos e Pisos",[
+  ["Assentamento de pisos cerâmicos e porcelanatos","Alinhamento, colagem e rejunte","🔳"],
+  ["Assentamento de azulejos e revestimentos de parede","Paredes internas, banheiros e cozinhas, incluindo pastilhas","🟦"],
+  ["Instalação de pedras decorativas","Filetes, canjiquinha ou mármores","🪨"],
+  ["Soleiras e peitoris","Instalação em mármore, granito ou sintéticos","🪟"],
+  ["Instalação de batentes, portas e janelas","Fixação firme de batentes e esquadrias","🚪"],
+  ["Sancas, gessos simples e detalhes decorativos","Execução em alvenaria","🎨"]]],
+ ["🛠️","Reformas, Manutenção e Obras Externas",[
+  ["Demolição controlada","Paredes, pisos e estruturas antigas durante reformas","🔨"],
+  ["Reparo de rachaduras, trincas e infiltrações","Tratamento de umidade e fechamento de fissuras","🩹"],
+  ["Calçadas, rampas e passeios","Construção e reparo, com preparação, concretagem e acabamento","🛣️"],
+  ["Telhados e coberturas","Madeiramento básico, telhas e calhas","🏘️"],
+  ["Construção de muros de arrimo","Paredes reforçadas para conter terra em declives","⛰️"],
+  ["Caixas de inspeção e esgoto","Montagem de caixas de passagem e gordura","🚰"]]]
 ];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 $("#cats").innerHTML = CATS.map((c,i)=>`<details ${i==0?"open":""}><summary><span>${c[0]} ${c[1]}<span class="cnt"></span></span></summary>${
- c[2].map(o=>`<label class="opt"><input type="checkbox" data-cat="${c[1]}" value="${o[0]}"><span><b>${o[0]}</b><small>${o[1]}</small></span></label>`).join("")}</details>`).join("");
+ c[2].map(o=>`<label class="opt"><input type="checkbox" data-cat="${c[1]}" value="${o[0]}"><span><b>${o[2]} ${o[0]}</b><small>${o[1]}</small></span></label>`).join("")}</details>`).join("");
 
+$("#svc").innerHTML=CATS.map(c=>'<h3 class="svc-cat">'+c[0]+' '+c[1]+'</h3><div class="sg">'+c[2].map(o=>'<div class="sc"><div class="e">'+o[2]+'</div><div><h4>'+o[0]+'</h4><p>'+o[1]+'</p></div></div>').join("")+'</div>').join("");
 function refresh(){
   const all=$$("#cats input:checked");
   $$("#cats details").forEach(d=>{const n=d.querySelectorAll("input:checked").length;d.querySelector(".cnt").textContent=n||""});
