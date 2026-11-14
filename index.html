@@ -190,7 +190,12 @@ footer a:hover{color:var(--or)}
 <section id="servicos"><div class="wrap">
   <h2>O que eu <span>faço</span></h2>
   <p class="sub">Da base da obra ao toque final, com material bem aplicado e mão de obra qualificada.</p>
-  <div id="svc"></div>
+  <div class="grid">
+    <div class="card"><div class="img t1"><svg viewBox="0 0 64 64" fill="none" stroke-width="3" stroke-linejoin="round"><rect x="6" y="14" width="52" height="12"/><rect x="6" y="26" width="52" height="12"/><rect x="6" y="38" width="52" height="12"/></svg></div><div><h3>Alvenaria Estrutural e Fundação</h3><p>Valas, alicerces, pilares, lajes e paredes com precisão de prumo e nível.</p></div></div>
+    <div class="card"><div class="img t2"><svg viewBox="0 0 64 64" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10 54 38 26M30 14l8-8 20 20-8 8z"/><path d="M8 56l6-14 8 8z"/></svg></div><div><h3>Reformas Residenciais e Comerciais</h3><p>Demolição controlada, mudança de layout e ampliações sem bagunça.</p></div></div>
+    <div class="card"><div class="img t3"><svg viewBox="0 0 64 64" fill="none" stroke-width="3"><rect x="8" y="8" width="22" height="22"/><rect x="34" y="8" width="22" height="22"/><rect x="8" y="34" width="22" height="22"/><rect x="34" y="34" width="22" height="22"/></svg></div><div><h3>Acabamento Fino</h3><p>Porcelanato, azulejos, pastilhas, pedras e rejunte perfeito.</p></div></div>
+    <div class="card"><div class="img t4"><svg viewBox="0 0 64 64" fill="none" stroke-width="3" stroke-linejoin="round"><path d="M32 6C20 22 14 30 14 40a18 18 0 0 0 36 0C50 30 44 22 32 6z"/></svg></div><div><h3>Manutenção e Impermeabilização</h3><p>Tratamento de infiltrações, trincas e umidade com garantia de serviço.</p></div></div>
+  </div>
 </div></section>
 
 <!-- CALCULADORA -->
@@ -315,7 +320,6 @@ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 $("#cats").innerHTML = CATS.map((c,i)=>`<details ${i==0?"open":""}><summary><span>${c[0]} ${c[1]}<span class="cnt"></span></span></summary>${
  c[2].map(o=>`<label class="opt"><input type="checkbox" data-cat="${c[1]}" value="${o[0]}"><span><b>${o[2]} ${o[0]}</b><small>${o[1]}</small></span></label>`).join("")}</details>`).join("");
 
-$("#svc").innerHTML=CATS.map(c=>'<h3 class="svc-cat">'+c[0]+' '+c[1]+'</h3><div class="sg">'+c[2].map(o=>'<div class="sc"><div class="e">'+o[2]+'</div><div><h4>'+o[0]+'</h4><p>'+o[1]+'</p></div></div>').join("")+'</div>').join("");
 function refresh(){
   const all=$$("#cats input:checked");
   $$("#cats details").forEach(d=>{const n=d.querySelectorAll("input:checked").length;d.querySelector(".cnt").textContent=n||""});
