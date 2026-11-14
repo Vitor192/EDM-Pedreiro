@@ -41,6 +41,7 @@ nav ul a:hover{color:var(--or)}
 #stage{font-weight:700;color:var(--or);font-size:1.1rem;letter-spacing:1px;text-transform:uppercase}
 .bar{height:5px;max-width:320px;margin:10px auto;background:#ffffff1f;border-radius:5px;overflow:hidden}
 #fill{height:100%;width:0;background:var(--or)}
+@media(max-width:760px){.hero-bot .bar{max-width:none;width:100vw;margin:10px calc(50% - 50vw);border-radius:0;height:6px}}
 .hint{font-size:.8rem;color:var(--mut)}
 .nogl{display:none;position:absolute;inset:0;align-items:center;justify-content:center;font-size:7rem}
 .bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(31,34,38,.55) 0%,rgba(31,34,38,.35) 45%,rgba(31,34,38,.7) 100%),var(--foto) center 62%/cover no-repeat;will-change:opacity;pointer-events:none}
@@ -114,8 +115,8 @@ fieldset.pz input{width:18px;height:18px;accent-color:var(--or);flex:none;margin
 .tab{background:var(--bg2);color:var(--mut);border:1px solid #ffffff14;padding:9px 18px;border-radius:30px;cursor:pointer;font-size:.9rem}
 .tab.on{background:var(--or);color:#111;font-weight:700;border-color:var(--or)}
 .g{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.gi{height:200px;border-radius:14px;position:relative;overflow:hidden;display:flex;align-items:flex-end;border:1px solid #ffffff12}
-.gi span{background:#000a;width:100%;padding:10px 14px;font-size:.88rem}
+.gi{height:200px;border-radius:14px;position:relative;overflow:hidden;display:flex;align-items:flex-end;border:0}
+.gi span{background:#000b;width:100%;margin:0;padding:12px 14px;font-size:.88rem;border-radius:0}
 .gi.hide{display:none}
 .ba{grid-column:span 2;position:relative;height:340px;border-radius:14px;overflow:hidden;border:1px solid #ffffff12;--p:50%}
 @media(max-width:560px){.ba{grid-column:span 1}}
