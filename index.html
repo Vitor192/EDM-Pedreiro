@@ -77,7 +77,7 @@ nav ul a:hover{color:var(--or)}
 .sc h4{font-size:1rem;margin-bottom:4px}.sc p{color:var(--mut);font-size:.88rem;line-height:1.45}
 /* CALCULADORA */
 .calc{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
-@media(max-width:860px){.calc{grid-template-columns:1fr}.calc .panel{position:static}}
+@media(max-width:860px){.calc{grid-template-columns:1fr}.calc .panel{position:static;max-height:none;overflow:visible}}
 details{background:var(--bg2);border-radius:14px;margin-bottom:12px;border:1px solid #ffffff12;overflow:hidden}
 summary{cursor:pointer;padding:16px 18px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
 summary::-webkit-details-marker{display:none}
@@ -91,12 +91,20 @@ label.opt:hover{background:var(--bg3)}
 label.opt input{accent-color:var(--or);width:20px;height:20px;margin-top:3px;flex:none}
 label.opt b{display:block;font-size:.97rem}
 label.opt small{color:var(--mut);display:block;line-height:1.4}
-.panel{background:var(--bg2);border-radius:16px;padding:22px;border:1px solid var(--or);position:sticky;top:78px}
+.panel{background:var(--bg2);border-radius:16px;padding:22px;border:1px solid var(--or);position:sticky;top:78px;max-height:calc(100vh - 96px);overflow-y:auto}
 .panel h3{margin-bottom:14px}
 .f{margin-bottom:12px}
 .f label{display:block;font-size:.85rem;color:var(--mut);margin-bottom:4px}
 .f input{width:100%;padding:12px;border-radius:8px;border:1px solid #ffffff22;background:var(--bg);color:var(--wh);font-size:1rem}
-.f input:focus{outline:2px solid var(--or)}
+.f input:focus,.f select:focus,.f textarea:focus{outline:2px solid var(--or)}
+.f select,.f textarea{width:100%;padding:12px;border-radius:8px;border:1px solid #ffffff22;background:var(--bg);color:var(--wh);font:inherit;font-size:1rem}
+.f textarea{resize:vertical;min-height:90px}
+fieldset.pz{border:0;padding:0;min-width:0}
+fieldset.pz legend{font-size:.85rem;color:var(--mut);margin-bottom:6px;padding:0}
+fieldset.pz label{display:flex;gap:10px;align-items:center;padding:10px 12px;margin-bottom:6px;border:1px solid #ffffff22;border-radius:8px;background:var(--bg);color:var(--wh);font-size:.93rem;cursor:pointer}
+fieldset.pz label:has(input:checked){border-color:var(--or);background:var(--bg3)}
+fieldset.pz input{width:18px;height:18px;accent-color:var(--or);flex:none;margin:0}
+#err.ok{color:#7be29a}
 #sel{font-size:.85rem;color:var(--mut);margin-bottom:14px}
 .panel .btn{width:100%;background:#25d366}
 .panel .btn:hover{background:#1ebe5a}
@@ -206,10 +214,18 @@ footer a:hover{color:var(--or)}
     <div id="cats"></div>
     <div class="panel">
       <h3>Seus dados</h3>
-      <div class="f"><label for="m2">Metragem total da obra (m²)</label><input id="m2" type="number" min="1" step="any" inputmode="decimal" placeholder="Ex.: 80"></div>
       <div class="f"><label for="nome">Nome</label><input id="nome" autocomplete="name" placeholder="Seu nome"></div>
-      <div class="f"><label for="tel">Telefone / WhatsApp</label><input id="tel" type="tel" autocomplete="tel" placeholder="(00) 00000-0000"></div>
+      <div class="f"><label for="tel">WhatsApp</label><input id="tel" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000"></div>
+      <div class="f"><label for="email">E-mail <span style="opacity:.7">(opcional)</span></label><input id="email" type="email" autocomplete="email" placeholder="seu@email.com"></div>
+      <div class="f"><label for="seg">Segmento da obra</label><select id="seg"><option value="">Selecione</option><option>Residencial</option><option>Comercial</option><option>Industrial</option><option>Condomínio / Loteamento</option><option>Rural / Sítio</option><option>Outro</option></select></div>
+      <div class="f"><label for="m2">Metragem total da obra (m²)</label><input id="m2" type="number" min="1" step="any" inputmode="decimal" placeholder="Ex.: 80"></div>
       <div class="f"><label for="loc">Cidade / Bairro</label><input id="loc" placeholder="Ex.: Centro, sua cidade"></div>
+      <fieldset class="f pz"><legend>Prazo para começar</legend>
+        <label><input type="radio" name="prazo" value="Quero iniciar de imediato / urgente"><span>Quero iniciar de imediato / urgente</span></label>
+        <label><input type="radio" name="prazo" value="Nas próximas semanas"><span>Nas próximas semanas</span></label>
+        <label><input type="radio" name="prazo" value="Apenas pesquisando para o próximo mês"><span>Apenas pesquisando para o próximo mês</span></label>
+      </fieldset>
+      <div class="f"><label for="obs">Observações: fale mais sobre a obra que deseja realizar <span style="opacity:.7">(opcional)</span></label><textarea id="obs" rows="4" maxlength="1000" placeholder="Ex.: quero construir uma casa de 2 quartos, já tenho o terreno e o projeto..."></textarea></div>
       <div id="sel">Nenhum serviço selecionado.</div>
       <div id="err"></div>
       <button class="btn" id="send" type="button">Enviar Solicitação via WhatsApp</button>
@@ -260,20 +276,21 @@ footer a:hover{color:var(--or)}
     <div><div class="logo" style="margin-bottom:10px;white-space:normal">EDM <b>Pedreiro</b> | Obras &amp; Acabamentos</div><p style="color:var(--mut);font-size:.93rem">Construção civil, reformas e acabamento com qualidade e prazo.</p></div>
     <div><h4>Links rápidos</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#orcamento">Orçamento</a></li><li><a href="#portfolio">Portfólio</a></li></ul></div>
     <div><h4>Região de atendimento</h4><ul><li>Sua cidade e região</li><li>Atendimento em obras residenciais e comerciais</li></ul></div>
-    <div><h4>Contato</h4><ul><li><a href="#" class="wl">WhatsApp: (00) 00000-0000</a></li><li>Seg a Sáb · 7h às 18h</li></ul></div>
+    <div><h4>Contato</h4><ul><li><a href="#" class="wl">WhatsApp: (22) 98100-8988</a></li><li>Seg a Sáb · 7h às 18h</li></ul></div>
   </div>
   <p class="cp">© 2026 EDM Pedreiro | Obras &amp; Acabamentos. Todos os direitos reservados.</p>
 </div></footer>
 
 <a href="#" class="wa wl" aria-label="Falar no WhatsApp"><svg viewBox="0 0 32 32"><path d="M16 3A13 13 0 0 0 4.9 22.6L3 29l6.6-1.8A13 13 0 1 0 16 3zm0 23.6a10.5 10.5 0 0 1-5.4-1.5l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.600zm5.800-7.900c-.3-.2-1.900-1-2.200-1s-.5-.2-.7.200-.8 1-1 1.200-.4.200-.7 0a8.700 8.700 0 0 1-4.300-3.800c-.3-.600.300-.500.800-1.600.1-.2 0-.4 0-.5l-1-2.300c-.2-.6-.5-.5-.7-.5h-.6a1.200 1.200 0 0 0-.9.400 3.700 3.700 0 0 0-1.100 2.700 6.400 6.400 0 0 0 1.400 3.400 14.700 14.700 0 0 0 5.600 4.900c2 .8 2.800.9 3.800.7a3.200 3.200 0 0 0 2.100-1.500 2.600 2.600 0 0 0 .2-1.500c-.1-.1-.3-.2-.6-.4z"/></svg></a>
 
+<script src="config.js" onerror="window.EDM_FB=window.EDM_FB||{}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script>
 /* ============ CONFIGURAÇÃO: troque pelo número real (55 + DDD + número) ============ */
-const WA_NUMBER = "5500000000000";
-const WA_DISPLAY = "(00) 00000-0000";
+const WA_NUMBER = "5522981008988";
+const WA_DISPLAY = "(22) 98100-8988";
 
 /* ============ DADOS DA CALCULADORA ============ */
 const CATS = [
@@ -327,20 +344,47 @@ function refresh(){
 }
 $("#cats").addEventListener("change",refresh);
 
+/* Registra o pedido no painel do profissional (Firebase/Firestore, via REST). Se não estiver configurado, só segue para o WhatsApp. */
+function saveLead(d){
+  const FB=window.EDM_FB||{};
+  if(!FB.apiKey||!FB.projectId) return;
+  const S=v=>({stringValue:String(v)});
+  const body={fields:{nome:S(d.nome),whatsapp:S(d.tel),email:S(d.email),segmento:S(d.seg),local:S(d.loc),
+    metragem:{doubleValue:d.m2},servicos:{arrayValue:{values:d.servicos.map(S)}},objetivo:S(d.obs),prazo:S(d.prazo),
+    mensagem:S(d.msg),status:S("novo"),criadoEm:{timestampValue:new Date().toISOString()}}};
+  try{
+    fetch("https://firestore.googleapis.com/v1/projects/"+encodeURIComponent(FB.projectId)+"/databases/(default)/documents/leads?key="+encodeURIComponent(FB.apiKey),
+      {method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),keepalive:true}).catch(()=>{});
+  }catch(e){}
+}
+
 $("#send").addEventListener("click",()=>{
-  const sel=$$("#cats input:checked"), m2=parseFloat($("#m2").value), nome=$("#nome").value.trim(), tel=$("#tel").value.trim(), loc=$("#loc").value.trim();
-  const err=$("#err");
+  const sel=$$("#cats input:checked"), m2=parseFloat($("#m2").value), nome=$("#nome").value.trim(), tel=$("#tel").value.trim(),
+        email=$("#email").value.trim(), seg=$("#seg").value, loc=$("#loc").value.trim(), obs=$("#obs").value.trim(),
+        prazo=($("input[name=prazo]:checked")||{}).value||"";
+  const err=$("#err"); err.className="";
   if(!sel.length) return err.textContent="Selecione pelo menos um serviço.";
+  if(!nome) return err.textContent="Informe seu nome.";
+  if(tel.replace(/\D/g,"").length<10) return err.textContent="Informe um WhatsApp válido, com DDD.";
+  if(email && !/^\S+@\S+\.\S+$/.test(email)) return err.textContent="Confira o e-mail informado.";
+  if(!seg) return err.textContent="Selecione o segmento da obra.";
   if(!(m2>0)) return err.textContent="Informe a metragem aproximada (m²).";
-  if(!nome||!tel||!loc) return err.textContent="Preencha nome, telefone e cidade/bairro.";
+  if(!loc) return err.textContent="Informe a cidade / bairro.";
+  if(!prazo) return err.textContent="Escolha o prazo para começar.";
   err.textContent="";
-  let msg="*SOLICITAÇÃO DE ORÇAMENTO*\n\n👤 *Nome:* "+nome+"\n📱 *Telefone:* "+tel+"\n📍 *Local:* "+loc+"\n📐 *Metragem:* "+m2.toLocaleString("pt-BR")+" m²\n";
+  let msg="Olá! Quero solicitar um orçamento pelo site do EDM Pedreiro | Obras & Acabamentos\n\n"+
+    "Nome: "+nome+"\nWhatsApp: "+tel+"\nE-mail: "+(email||"Não informado")+"\nSegmento: "+seg+
+    "\nMetragem: "+m2.toLocaleString("pt-BR")+" m²\nLocal: "+loc+"\n\nSoluções de interesse:\n";
   CATS.forEach(c=>{
     const its=sel.filter(i=>i.dataset.cat===c[1]);
-    if(its.length) msg+="\n"+c[0]+" *"+c[1]+"*\n"+its.map(i=>"  ✅ "+i.value).join("\n")+"\n";
+    if(its.length) msg+="\n"+c[0]+" "+c[1]+"\n"+its.map(i=>"• "+i.value).join("\n")+"\n";
   });
-  msg+="\nAguardo retorno. Obrigado!";
-  window.open("https://api.whatsapp.com/send?phone="+WA_NUMBER+"&text="+encodeURIComponent(msg),"_blank");
+  msg+="\nObjetivo: "+(obs||"Não informado")+"\nPrazo para começar: "+prazo;
+  const url="https://api.whatsapp.com/send?phone="+WA_NUMBER+"&text="+encodeURIComponent(msg);
+  const w=window.open(url,"_blank");           /* abre o WhatsApp primeiro, direto no clique */
+  saveLead({nome,tel,email:email||"",seg,loc,m2,obs:obs||"",prazo,msg,servicos:sel.map(i=>i.value)});
+  if(!w) location.href=url;                    /* pop-up bloqueado: abre na mesma aba */
+  err.className="ok"; err.textContent="Pronto! Confirme o envio da mensagem no WhatsApp.";
 });
 
 /* links de WhatsApp gerais */

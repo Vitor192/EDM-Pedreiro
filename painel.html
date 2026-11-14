@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel | EDM Pedreiro</title>
+<style>
+:root{--bg:#1f2226;--bg2:#2a2e33;--bg3:#34393f;--or:#ff7a1a;--or2:#e5640a;--wh:#fff;--mut:#b4bac1;--ok:#7be29a;--bad:#ff9b9b}
+*,*::before,*::after{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--wh);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.btn{display:inline-block;background:var(--or);color:#1a1a1a;font-weight:700;padding:11px 18px;border:0;border-radius:10px;cursor:pointer;font-size:.95rem;transition:.2s}
+.btn:hover{background:var(--or2)}
+.btn.ghost{background:transparent;color:var(--wh);border:1px solid #ffffff33}
+.btn.ghost:hover{border-color:var(--or);color:var(--or)}
+.btn.wa{background:#25d366}.btn.wa:hover{background:#1ebe5a}
+.btn.sm{padding:8px 13px;font-size:.85rem}
+.btn.danger{background:transparent;color:var(--bad);border:1px solid #ff9b9b55}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+b.or,.or{color:var(--or)}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.box{width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--or);border-radius:16px;padding:28px}
+.box h1{font-size:1.4rem;margin-bottom:4px}
+.box p{color:var(--mut);font-size:.9rem;margin-bottom:18px}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:.85rem;color:var(--mut);margin-bottom:4px}
+.f input{width:100%;padding:12px;border-radius:8px;border:1px solid #ffffff22;background:var(--bg);color:var(--wh);font-size:1rem}
+.f input:focus,.search:focus{outline:2px solid var(--or)}
+.msg{min-height:1.3em;font-size:.88rem;color:var(--bad);margin:6px 0 10px}
+.msg.warn{color:#ffd37a}
+.box .btn{width:100%}
+/* painel */
+#app{display:none}
+header{background:var(--bg2);border-bottom:1px solid #ffffff14;position:sticky;top:0;z-index:5}
+header .wrap{display:flex;align-items:center;gap:12px;height:60px}
+header .t{font-weight:800;margin-right:auto}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{background:var(--bg2);color:var(--mut);border:1px solid #ffffff14;padding:8px 14px;border-radius:30px;cursor:pointer;font-size:.88rem}
+.tab.on{background:var(--or);color:#111;font-weight:700;border-color:var(--or)}
+.search{flex:1;min-width:180px;padding:10px 12px;border-radius:8px;border:1px solid #ffffff22;background:var(--bg2);color:var(--wh);font-size:.95rem}
+.count{color:var(--mut);font-size:.85rem;margin-bottom:12px}
+.lead{background:var(--bg2);border:1px solid #ffffff12;border-left:4px solid var(--or);border-radius:14px;padding:18px;margin-bottom:14px}
+.lead.done{border-left-color:#4b5259;opacity:.78}
+.lead.urg{border-left-color:#ff4d4d}
+.top{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.top h3{font-size:1.1rem}
+.when{color:var(--mut);font-size:.82rem;margin-left:auto}
+.tag{font-size:.74rem;font-weight:700;border-radius:20px;padding:2px 10px;background:var(--bg3);color:var(--mut)}
+.tag.new{background:var(--or);color:#111}
+.tag.urg{background:#ff4d4d;color:#fff}
+.tag.ok{background:#25d36633;color:var(--ok)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 18px;font-size:.92rem;margin-bottom:12px}
+.grid small{display:block;color:var(--mut);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px}
+.sv{font-size:.9rem;color:var(--mut);background:var(--bg);border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.sv b{color:var(--wh)}
+.sv ul{margin:4px 0 0 18px}
+.obj{font-size:.92rem;margin-bottom:12px;white-space:pre-wrap}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.empty{text-align:center;color:var(--mut);padding:50px 10px;background:var(--bg2);border-radius:14px}
+.note{font-size:.8rem;color:var(--mut);margin:24px 0 40px}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <form class="box" id="lf" autocomplete="on">
+    <h1>EDM <b class="or">Pedreiro</b></h1>
+    <p>Painel do profissional. Acesso restrito.</p>
+    <div class="f"><label for="em">E-mail</label><input id="em" type="email" autocomplete="username" required></div>
+    <div class="f"><label for="pw">Senha</label><input id="pw" type="password" autocomplete="current-password" required></div>
+    <div class="msg" id="lmsg"></div>
+    <button class="btn" type="submit" id="lbtn">Entrar</button>
+  </form>
+</div>
+
+<div id="app">
+  <header><div class="wrap">
+    <span class="t">EDM <b class="or">Pedreiro</b> · Painel</span>
+    <button class="btn ghost sm" id="reload" type="button">Atualizar</button>
+    <button class="btn ghost sm" id="out" type="button">Sair</button>
+  </div></header>
+  <div class="wrap">
+    <div class="bar">
+      <div class="tabs" id="tabs">
+        <button class="tab on" data-f="all" type="button">Todos</button>
+        <button class="tab" data-f="novo" type="button">Novos</button>
+        <button class="tab" data-f="atendido" type="button">Atendidos</button>
+      </div>
+      <input class="search" id="q" type="search" placeholder="Buscar por nome, telefone, serviço...">
+    </div>
+    <div class="msg" id="amsg"></div>
+    <div class="count" id="cnt"></div>
+    <div id="list"></div>
+    <p class="note">Aqui aparecem todos que clicaram em “Enviar Solicitação via WhatsApp”, mesmo os que não chegaram a enviar a mensagem. Use o botão “Chamar no WhatsApp” para falar com a pessoa.</p>
+  </div>
+</div>
+
+<script src="config.js" onerror="window.EDM_FB=window.EDM_FB||{}"></script>
+<script>
+const FB = window.EDM_FB || {};
+const $ = s => document.querySelector(s);
+const API = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(FB.projectId || "x") + "/databases/(default)/documents";
+const KEY = encodeURIComponent(FB.apiKey || "");
+let leads = [], filter = "all", timer = null;
+
+/* ---------- sessão (guardada só nesta aba) ---------- */
+let sess = null;
+try { sess = JSON.parse(sessionStorage.getItem("edm_sess") || "null"); } catch (e) {}
+function saveSess(s) { sess = s; try { s ? sessionStorage.setItem("edm_sess", JSON.stringify(s)) : sessionStorage.removeItem("edm_sess"); } catch (e) {} }
+
+function esc(t) { return String(t == null ? "" : t).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+/* ---------- login (Firebase Auth, e-mail e senha) ---------- */
+async function signIn(email, password) {
+  const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=" + KEY, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, returnSecureToken: true })
+  });
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error && d.error.message || "ERRO");
+  saveSess({ idToken: d.idToken, refreshToken: d.refreshToken, exp: Date.now() + (+d.expiresIn - 60) * 1000, email: d.email });
+}
+async function token() {
+  if (!sess) throw new Error("SEM_SESSAO");
+  if (Date.now() < sess.exp) return sess.idToken;
+  const r = await fetch("https://securetoken.googleapis.com/v1/token?key=" + KEY, {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "grant_type=refresh_token&refresh_token=" + encodeURIComponent(sess.refreshToken)
+  });
+  const d = await r.json();
+  if (!r.ok) { saveSess(null); throw new Error("SEM_SESSAO"); }
+  saveSess({ ...sess, idToken: d.id_token, refreshToken: d.refresh_token, exp: Date.now() + (+d.expires_in - 60) * 1000 });
+  return sess.idToken;
+}
+async function api(path, opts = {}) {
+  const t = await token();
+  const r = await fetch(API + path, { ...opts, headers: { "Authorization": "Bearer " + t, "Content-Type": "application/json" } });
+  if (r.status === 401 || r.status === 403) throw new Error("NEGADO");
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.status === 204 ? null : r.json();
+}
+
+/* ---------- dados ---------- */
+const val = f => f == null ? "" : f.stringValue !== undefined ? f.stringValue : f.doubleValue !== undefined ? f.doubleValue : f.integerValue !== undefined ? +f.integerValue :
+  f.timestampValue !== undefined ? f.timestampValue : f.arrayValue ? (f.arrayValue.values || []).map(val) : "";
+function parse(doc) {
+  const o = {}; for (const k in doc.fields || {}) o[k] = val(doc.fields[k]);
+  o.id = doc.name.split("/").pop(); return o;
+}
+async function load() {
+  const rows = await api(":runQuery", { method: "POST", body: JSON.stringify({ structuredQuery: {
+    from: [{ collectionId: "leads" }], orderBy: [{ field: { fieldPath: "criadoEm" }, direction: "DESCENDING" }], limit: 300 } }) });
+  leads = rows.filter(r => r.document).map(r => parse(r.document));
+}
+
+/* ---------- tela ---------- */
+const fmtDate = iso => { try { return new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
+const digits = t => String(t || "").replace(/\D/g, "");
+function waLink(l) {
+  let n = digits(l.whatsapp); if (n.length <= 11) n = "55" + n;
+  return "https://wa.me/" + n + "?text=" + encodeURIComponent("Olá, " + (l.nome || "") + "! Aqui é do EDM Pedreiro. Vi sua solicitação de orçamento pelo site e vou te ajudar.");
+}
+function servicosHtml(l) {
+  const sv = Array.isArray(l.servicos) ? l.servicos : [];
+  return sv.length ? "<ul>" + sv.map(s => "<li>" + esc(s) + "</li>").join("") + "</ul>" : "—";
+}
+function render() {
+  const q = $("#q").value.trim().toLowerCase();
+  const rows = leads.filter(l => (filter === "all" || (l.status || "novo") === filter) &&
+    (!q || [l.nome, l.whatsapp, l.email, l.local, l.segmento, l.objetivo, (l.servicos || []).join(" ")].join(" ").toLowerCase().includes(q)));
+  $("#cnt").textContent = rows.length + " solicitação(ões) · " + leads.filter(l => (l.status || "novo") === "novo").length + " nova(s)";
+  $("#list").innerHTML = rows.length ? rows.map(l => {
+    const done = l.status === "atendido", urg = /urgente/i.test(l.prazo || "");
+    return `<article class="lead ${done ? "done" : ""} ${urg && !done ? "urg" : ""}" data-id="${esc(l.id)}">
+      <div class="top"><h3>${esc(l.nome)}</h3>
+        <span class="tag ${done ? "ok" : "new"}">${done ? "Atendido" : "Novo"}</span>
+        ${urg ? '<span class="tag urg">Urgente</span>' : ""}
+        <span class="when">${esc(fmtDate(l.criadoEm))}</span></div>
+      <div class="grid">
+        <div><small>WhatsApp</small>${esc(l.whatsapp)}</div>
+        <div><small>E-mail</small>${esc(l.email || "Não informado")}</div>
+        <div><small>Segmento</small>${esc(l.segmento)}</div>
+        <div><small>Local</small>${esc(l.local)}</div>
+        <div><small>Metragem</small>${esc(l.metragem)} m²</div>
+        <div><small>Prazo para começar</small>${esc(l.prazo)}</div>
+      </div>
+      <div class="sv"><b>Soluções de interesse</b>${servicosHtml(l)}</div>
+      ${l.objetivo ? `<div class="obj"><small style="color:var(--mut)">OBJETIVO / OBSERVAÇÕES</small><br>${esc(l.objetivo)}</div>` : ""}
+      <div class="acts">
+        <a class="btn wa sm" href="${esc(waLink(l))}" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+        <button class="btn ghost sm" data-a="copy" type="button">Copiar mensagem</button>
+        <button class="btn ghost sm" data-a="toggle" type="button">${done ? "Marcar como novo" : "Marcar como atendido"}</button>
+        <button class="btn danger sm" data-a="del" type="button">Excluir</button>
+      </div></article>`;
+  }).join("") : '<div class="empty">Nenhuma solicitação por aqui ainda.</div>';
+}
+function showErr(m, warn) { const e = $("#amsg"); e.textContent = m || ""; e.className = "msg" + (warn ? " warn" : ""); }
+async function refresh() {
+  try { await load(); showErr(""); render(); }
+  catch (e) {
+    if (e.message === "SEM_SESSAO" || e.message === "NEGADO") { showErr(""); logout(e.message === "NEGADO" ? "Este usuário não tem permissão de acesso ao painel." : "Sessão expirada. Entre novamente."); }
+    else showErr("Não foi possível carregar agora (" + e.message + "). Tente atualizar.");
+  }
+}
+function enter() {
+  $("#login").style.display = "none"; $("#app").style.display = "block";
+  refresh(); clearInterval(timer); timer = setInterval(refresh, 60000);
+}
+function logout(m) {
+  saveSess(null); clearInterval(timer); leads = [];
+  $("#app").style.display = "none"; $("#login").style.display = "grid";
+  $("#lmsg").textContent = m || ""; $("#pw").value = "";
+}
+
+/* ---------- eventos ---------- */
+$("#lf").addEventListener("submit", async ev => {
+  ev.preventDefault();
+  const m = $("#lmsg"), b = $("#lbtn"); m.textContent = "";
+  if (!FB.apiKey || !FB.projectId) { m.textContent = "Painel ainda não configurado (veja SETUP.md)."; return; }
+  b.disabled = true; b.textContent = "Entrando...";
+  try { await signIn($("#em").value.trim(), $("#pw").value); enter(); }
+  catch (e) {
+    const c = e.message || "";
+    m.textContent = /INVALID_LOGIN|INVALID_PASSWORD|EMAIL_NOT_FOUND|INVALID_EMAIL/.test(c) ? "E-mail ou senha incorretos."
+      : /TOO_MANY/.test(c) ? "Muitas tentativas. Aguarde alguns minutos." : "Não foi possível entrar agora. Tente novamente.";
+  }
+  b.disabled = false; b.textContent = "Entrar";
+});
+$("#out").addEventListener("click", () => logout(""));
+$("#reload").addEventListener("click", refresh);
+$("#q").addEventListener("input", render);
+$("#tabs").addEventListener("click", e => {
+  const t = e.target.closest(".tab"); if (!t) return;
+  filter = t.dataset.f; document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t)); render();
+});
+$("#list").addEventListener("click", async e => {
+  const btn = e.target.closest("button[data-a]"); if (!btn) return;
+  const card = btn.closest(".lead"), l = leads.find(x => x.id === card.dataset.id); if (!l) return;
+  const a = btn.dataset.a;
+  try {
+    if (a === "copy") {
+      await navigator.clipboard.writeText(l.mensagem || ""); btn.textContent = "Copiado!"; setTimeout(() => btn.textContent = "Copiar mensagem", 1500);
+    } else if (a === "toggle") {
+      const st = l.status === "atendido" ? "novo" : "atendido";
+      await api("/leads/" + encodeURIComponent(l.id) + "?updateMask.fieldPaths=status", { method: "PATCH", body: JSON.stringify({ fields: { status: { stringValue: st } } }) });
+      l.status = st; render();
+    } else if (a === "del") {
+      if (!confirm("Excluir a solicitação de " + (l.nome || "este cliente") + "? Não dá para desfazer.")) return;
+      await api("/leads/" + encodeURIComponent(l.id), { method: "DELETE" });
+      leads = leads.filter(x => x !== l); render();
+    }
+  } catch (err) { showErr("Não foi possível concluir a ação (" + err.message + ")."); }
+});
+
+if (!FB.apiKey || !FB.projectId) $("#lmsg").className = "msg warn", $("#lmsg").textContent = "Painel ainda não configurado: preencha o config.js (veja SETUP.md).";
+if (sess) enter();
+</script>
+</body>
+</html>
