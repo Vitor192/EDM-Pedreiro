@@ -378,8 +378,13 @@ $("#send").addEventListener("click",()=>{
   const url="https://api.whatsapp.com/send?phone="+WA_NUMBER+"&text="+encodeURIComponent(msg);
   const w=window.open(url,"_blank");           /* abre o WhatsApp primeiro, direto no clique */
   saveLead({nome,tel,email:email||"",seg,loc,m2,obs:obs||"",prazo,msg,servicos:sel.map(i=>i.value)});
-  if(!w) location.href=url;                    /* pop-up bloqueado: abre na mesma aba */
-  err.className="ok"; err.textContent="Pronto! Confirme o envio da mensagem no WhatsApp.";
+  if(!w){ location.href=url; return; }        /* pop-up bloqueado: abre na mesma aba */
+  err.className="ok"; err.textContent="Pronto! Confirme o envio no WhatsApp. Preparando um novo orçamento...";
+  /* limpa tudo e recarrega a página para começar um novo orçamento */
+  $$("#cats input").forEach(i=>i.checked=false);
+  $$(".panel input, .panel select, .panel textarea").forEach(i=>{ if(i.type==="radio"||i.type==="checkbox") i.checked=false; else i.value=""; });
+  refresh();
+  setTimeout(()=>{ location.hash="orcamento"; location.reload(); },1800);
 });
 
 /* links de WhatsApp gerais */
