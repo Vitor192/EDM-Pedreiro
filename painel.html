@@ -59,6 +59,11 @@ header .t{font-weight:800;margin-right:auto}
 .sv ul{margin:4px 0 0 18px}
 .obj{font-size:.92rem;margin-bottom:12px;white-space:pre-wrap}
 .acts{display:flex;flex-wrap:wrap;gap:8px}
+.modes{display:flex;gap:8px;margin:20px 0 0}
+.mode{background:var(--bg2);color:var(--mut);border:1px solid #ffffff14;padding:10px 18px;border-radius:10px;cursor:pointer;font-size:.95rem;font-weight:700}
+.mode.on{background:var(--bg3);color:var(--wh);border-color:var(--or)}
+.mode i{font-style:normal;background:var(--or);color:#111;border-radius:20px;padding:1px 8px;font-size:.75rem;margin-left:6px}
+.vdate{font-size:1.25rem;font-weight:800;color:var(--or);text-transform:capitalize}
 .empty{text-align:center;color:var(--mut);padding:50px 10px;background:var(--bg2);border-radius:14px}
 .note{font-size:.8rem;color:var(--mut);margin:24px 0 40px}
 </style>
@@ -83,6 +88,7 @@ header .t{font-weight:800;margin-right:auto}
     <button class="btn ghost sm" id="out" type="button">Sair</button>
   </div></header>
   <div class="wrap">
+    <div class="modes"><button class="mode on" data-m="leads" type="button">Orçamentos <i id="nl">0</i></button><button class="mode" data-m="visitas" type="button">Visitas agendadas <i id="nv">0</i></button></div>
     <div class="bar">
       <div class="tabs" id="tabs">
         <button class="tab on" data-f="all" type="button">Todos</button>
@@ -104,7 +110,7 @@ const FB = window.EDM_FB || {};
 const $ = s => document.querySelector(s);
 const API = "https://firestore.googleapis.com/v1/projects/" + encodeURIComponent(FB.projectId || "x") + "/databases/(default)/documents";
 const KEY = encodeURIComponent(FB.apiKey || "");
-let leads = [], filter = "all", timer = null;
+let leads = [], visitas = [], mode = "leads", filter = "all", timer = null;
 
 /* ---------- sessão (guardada só nesta aba) ---------- */
 let sess = null;
@@ -154,6 +160,11 @@ async function load() {
   const rows = await api(":runQuery", { method: "POST", body: JSON.stringify({ structuredQuery: {
     from: [{ collectionId: "leads" }], orderBy: [{ field: { fieldPath: "criadoEm" }, direction: "DESCENDING" }], limit: 300 } }) });
   leads = rows.filter(r => r.document).map(r => parse(r.document));
+  try {
+    const vr = await api(":runQuery", { method: "POST", body: JSON.stringify({ structuredQuery: {
+      from: [{ collectionId: "visitas" }], orderBy: [{ field: { fieldPath: "chave" }, direction: "ASCENDING" }], limit: 500 } }) });
+    visitas = vr.filter(r => r.document).map(r => parse(r.document));
+  } catch (e) { if (e.message === "SEM_SESSAO") throw e; visitas = []; showErr("Visitas indisponíveis: atualize as regras do Firestore (veja SETUP.md).", true); }
 }
 
 /* ---------- tela ---------- */
@@ -168,6 +179,11 @@ function servicosHtml(l) {
   return sv.length ? "<ul>" + sv.map(s => "<li>" + esc(s) + "</li>").join("") + "</ul>" : "—";
 }
 function render() {
+  $("#nl").textContent = leads.filter(l => (l.status || "novo") === "novo").length;
+  $("#nv").textContent = visitas.filter(isProx).length;
+  mode === "leads" ? renderLeads() : renderVisitas();
+}
+function renderLeads() {
   const q = $("#q").value.trim().toLowerCase();
   const rows = leads.filter(l => (filter === "all" || (l.status || "novo") === filter) &&
     (!q || [l.nome, l.whatsapp, l.email, l.local, l.segmento, l.objetivo, (l.servicos || []).join(" ")].join(" ").toLowerCase().includes(q)));
@@ -196,6 +212,44 @@ function render() {
         <button class="btn danger sm" data-a="del" type="button">Excluir</button>
       </div></article>`;
   }).join("") : '<div class="empty">Nenhuma solicitação por aqui ainda.</div>';
+}
+const todayIso = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+const isProx = v => v.status !== "realizada" && String(v.data) >= todayIso();
+const vLabel = d => { try { return new Date(d + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }); } catch (e) { return d; } };
+const ENDH = { "09:00": "11:00", "11:00": "13:00", "13:00": "15:00" };
+function renderVisitas() {
+  const q = $("#q").value.trim().toLowerCase();
+  let rows = visitas.filter(v => (filter === "prox" ? isProx(v) : !isProx(v)) &&
+    (!q || [v.nome, v.whatsapp, v.endereco, v.observacao, v.data].join(" ").toLowerCase().includes(q)));
+  if (filter !== "prox") rows = rows.slice().reverse();
+  $("#cnt").textContent = rows.length + " visita(s)";
+  $("#list").innerHTML = rows.length ? rows.map(v => {
+    const done = v.status === "realizada";
+    return `<article class="lead ${done ? "done" : ""}" data-id="${esc(v.id)}">
+      <div class="top"><span class="vdate">${esc(vLabel(v.data))}</span>
+        <span class="tag ${done ? "ok" : "new"}">${done ? "Realizada" : "Agendada"}</span>
+        <span class="when">${esc(v.hora)} às ${esc(ENDH[v.hora] || "")}</span></div>
+      <div class="grid">
+        <div><small>Cliente</small>${esc(v.nome)}</div>
+        <div><small>WhatsApp</small>${esc(v.whatsapp)}</div>
+        <div><small>Endereço da obra</small>${esc(v.endereco)}</div>
+      </div>
+      ${v.observacao ? `<div class="obj"><small style="color:var(--mut)">OBSERVAÇÕES</small><br>${esc(v.observacao)}</div>` : ""}
+      <div class="acts">
+        <a class="btn wa sm" href="${esc(waLink({ nome: v.nome, whatsapp: v.whatsapp }).replace(/text=.*/, "text=" + encodeURIComponent("Olá, " + v.nome + "! Aqui é do EDM Pedreiro. Confirmando sua visita em " + vLabel(v.data) + ", às " + v.hora + ".")))}" target="_blank" rel="noopener">Confirmar pelo WhatsApp</a>
+        <button class="btn ghost sm" data-a="copy" type="button">Copiar mensagem</button>
+        <button class="btn ghost sm" data-a="toggle" type="button">${done ? "Marcar como agendada" : "Marcar como realizada"}</button>
+        <button class="btn danger sm" data-a="del" type="button">Cancelar visita</button>
+      </div></article>`;
+  }).join("") : '<div class="empty">Nenhuma visita por aqui.</div>';
+}
+function setMode(m) {
+  mode = m; filter = m === "leads" ? "all" : "prox";
+  document.querySelectorAll(".mode").forEach(x => x.classList.toggle("on", x.dataset.m === m));
+  $("#tabs").innerHTML = m === "leads"
+    ? '<button class="tab on" data-f="all" type="button">Todos</button><button class="tab" data-f="novo" type="button">Novos</button><button class="tab" data-f="atendido" type="button">Atendidos</button>'
+    : '<button class="tab on" data-f="prox" type="button">Próximas</button><button class="tab" data-f="ant" type="button">Anteriores</button>';
+  render();
 }
 function showErr(m, warn) { const e = $("#amsg"); e.textContent = m || ""; e.className = "msg" + (warn ? " warn" : ""); }
 async function refresh() {
@@ -232,25 +286,28 @@ $("#lf").addEventListener("submit", async ev => {
 $("#out").addEventListener("click", () => logout(""));
 $("#reload").addEventListener("click", refresh);
 $("#q").addEventListener("input", render);
+document.querySelector(".modes").addEventListener("click", e => { const b = e.target.closest(".mode"); if (b) setMode(b.dataset.m); });
 $("#tabs").addEventListener("click", e => {
   const t = e.target.closest(".tab"); if (!t) return;
   filter = t.dataset.f; document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t)); render();
 });
 $("#list").addEventListener("click", async e => {
   const btn = e.target.closest("button[data-a]"); if (!btn) return;
-  const card = btn.closest(".lead"), l = leads.find(x => x.id === card.dataset.id); if (!l) return;
+  const card = btn.closest(".lead"), src = mode === "visitas" ? visitas : leads, coll = mode === "visitas" ? "visitas" : "leads", l = src.find(x => x.id === card.dataset.id); if (!l) return;
   const a = btn.dataset.a;
   try {
     if (a === "copy") {
       await navigator.clipboard.writeText(l.mensagem || ""); btn.textContent = "Copiado!"; setTimeout(() => btn.textContent = "Copiar mensagem", 1500);
     } else if (a === "toggle") {
-      const st = l.status === "atendido" ? "novo" : "atendido";
-      await api("/leads/" + encodeURIComponent(l.id) + "?updateMask.fieldPaths=status", { method: "PATCH", body: JSON.stringify({ fields: { status: { stringValue: st } } }) });
+      const st = (l.status === "atendido" || l.status === "realizada") ? "novo" : (mode === "visitas" ? "realizada" : "atendido");
+      await api("/" + coll + "/" + encodeURIComponent(l.id) + "?updateMask.fieldPaths=status", { method: "PATCH", body: JSON.stringify({ fields: { status: { stringValue: st } } }) });
       l.status = st; render();
     } else if (a === "del") {
-      if (!confirm("Excluir a solicitação de " + (l.nome || "este cliente") + "? Não dá para desfazer.")) return;
-      await api("/leads/" + encodeURIComponent(l.id), { method: "DELETE" });
-      leads = leads.filter(x => x !== l); render();
+      if (!confirm((mode === "visitas" ? "Cancelar a visita de " : "Excluir a solicitação de ") + (l.nome || "este cliente") + "? Não dá para desfazer.")) return;
+      await api("/" + coll + "/" + encodeURIComponent(l.id), { method: "DELETE" });
+      if (mode === "visitas" && l.chave) { try { await api("/slots/" + encodeURIComponent(l.chave), { method: "DELETE" }); } catch (e) {} }  /* libera o horário */
+      if (mode === "visitas") visitas = visitas.filter(x => x !== l); else leads = leads.filter(x => x !== l);
+      render();
     }
   } catch (err) { showErr("Não foi possível concluir a ação (" + err.message + ")."); }
 });

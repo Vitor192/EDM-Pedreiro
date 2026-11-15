@@ -147,13 +147,53 @@ footer a:hover{color:var(--or)}
 .wa{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:60px;height:60px;border-radius:50%;background:#25d366;display:grid;place-items:center;z-index:60;box-shadow:0 6px 20px #0008;animation:p 2.2s infinite}
 .wa svg{width:32px;fill:#fff}
 @keyframes p{0%,100%{box-shadow:0 0 0 0 #25d36677}50%{box-shadow:0 0 0 14px #25d36600}}
+
+/* AGENDAMENTO */
+#agendar{border-top:1px solid #ffffff12}
+.ag{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;align-items:start}
+.cal,.agp{background:var(--bg2);border:1px solid #ffffff14;border-radius:16px;padding:20px}
+.agp{border-color:var(--or)}
+.agp h3{margin-bottom:6px}.agp h3::first-letter,.cal-h b::first-letter{text-transform:uppercase}
+#ag-empty p{color:var(--mut);font-size:.95rem}
+.cal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-h b{font-size:1.1rem}
+.cal-h button{width:40px;height:40px;border-radius:10px;border:1px solid #ffffff22;background:var(--bg);color:var(--wh);font-size:1.4rem;line-height:1;cursor:pointer}
+.cal-h button:disabled{opacity:.3;cursor:default}
+.cal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.cal-g .dw{font-size:.75rem;color:var(--mut);padding:4px 0}
+.cal-g .d{aspect-ratio:1;min-height:38px;display:grid;place-items:center;border-radius:10px;font:inherit;font-size:.95rem;color:#ffffff40;border:1px solid transparent;background:none;padding:0}
+.cal-g .d.sat{color:var(--wh);background:var(--bg);border-color:#ffffff22;cursor:pointer;font-weight:700}
+.cal-g .d.sat:hover{border-color:var(--or)}
+.cal-g .d.sat.off{color:#ffffff55;background:none;text-decoration:line-through;cursor:not-allowed;border-color:transparent;font-weight:400}
+.cal-g .d.sat.sel{background:var(--or);color:#111;border-color:var(--or)}
+.cal-g .d.blank{visibility:hidden}
+.cal-leg{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px;font-size:.8rem;color:var(--mut)}
+.cal-leg span{display:flex;align-items:center;gap:6px}
+.lg{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid #ffffff44}
+.lg.a{background:var(--bg)}.lg.s{background:var(--or);border-color:var(--or)}.lg.o{background:none;border-color:#ffffff22}
+.ag-alt{margin-top:18px;background:var(--bg2);border:1px solid #ffffff14;border-radius:16px;padding:18px;display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between}
+.ag-alt p{color:var(--mut);font-size:.92rem;flex:1;min-width:200px}
+.btn.wpp{background:#25d366;color:#0b1a10}.btn.wpp:hover{background:#1ebe5a}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.slot{padding:11px 8px;border-radius:10px;border:1px solid #ffffff22;background:var(--bg);color:var(--wh);cursor:pointer;font:inherit;font-weight:700;text-align:center}
+.slot small{display:block;color:var(--mut);font-weight:400;font-size:.75rem}
+.slot:hover:not(:disabled){border-color:var(--or)}
+.slot.sel{border-color:var(--or);background:var(--bg3)}
+.slot:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+#ag-form .msg{min-height:1.2em;font-size:.88rem;color:#ff9b9b;margin:4px 0 10px}
+#ag-form .btn,#ag-ok .btn{width:100%;text-align:center}
+#ag-form .btn:disabled{opacity:.6;cursor:wait}
+#ag-ok .okbox{background:var(--bg);border:1px solid #25d36655;border-radius:12px;padding:16px;margin:12px 0 16px;line-height:1.7}
+#ag-ok .okbox b{color:var(--or)}
+#ag-ok .btn+.btn{margin-top:10px}
+@media(max-width:860px){.ag{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <nav><div class="wrap">
   <a href="#top" class="logo">EDM <b>Pedreiro</b><span class="hide-s"> | Obras &amp; Acabamentos</span></a>
-  <ul><li><a href="#sobre">Sobre</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#orcamento">Orçamento</a></li><li><a href="#portfolio">Portfólio</a></li><li><a href="#contato">Contato</a></li></ul>
+  <ul><li><a href="#sobre">Sobre</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#orcamento">Orçamento</a></li><li><a href="#agendar">Agendar visita</a></li><li><a href="#portfolio">Portfólio</a></li><li><a href="#contato">Contato</a></li></ul>
   <a href="#orcamento" class="btn" style="padding:9px 16px;font-size:.88rem">Orçamento</a>
   <button class="mb" type="button" aria-label="Menu" aria-expanded="false">☰</button>
 </div></nav>
@@ -230,6 +270,39 @@ footer a:hover{color:var(--or)}
 </div></section>
 
 <!-- 5. PORTFÓLIO -->
+<!-- AGENDAMENTO DE VISITAS -->
+<section id="agendar"><div class="wrap">
+  <h2>Agende sua <span>visita</span></h2>
+  <p class="sub">Visita presencial para avaliar a obra e fazer o orçamento. Atendo aos sábados, das 9h às 15h, em horários de 2 horas.</p>
+  <div class="ag">
+    <div>
+      <div class="cal">
+        <div class="cal-h"><button type="button" id="cal-prev" aria-label="Mês anterior">&#8249;</button><b id="cal-title"></b><button type="button" id="cal-next" aria-label="Próximo mês">&#8250;</button></div>
+        <div class="cal-g" id="cal-grid"></div>
+        <div class="cal-leg"><span><i class="lg a"></i>Sábado disponível</span><span><i class="lg s"></i>Selecionado</span><span><i class="lg o"></i>Lotado / indisponível</span></div>
+      </div>
+      <div class="ag-alt">
+        <p>Não consegue aos sábados? Combine outro dia e horário direto comigo.</p>
+        <a class="btn wpp" id="ag-alt" href="#" target="_blank" rel="noopener">Combinar outro dia pelo WhatsApp</a>
+      </div>
+    </div>
+    <div class="agp">
+      <div id="ag-empty"><h3>Escolha um sábado</h3><p>Toque em uma data disponível no calendário para ver os horários.</p></div>
+      <form id="ag-form" hidden novalidate>
+        <h3 id="ag-date"></h3>
+        <div class="f"><label>Horário (cada visita dura cerca de 2 horas)</label><div class="slots" id="ag-slots"></div></div>
+        <div class="f"><label for="ag-nome">Nome</label><input id="ag-nome" autocomplete="name" placeholder="Seu nome"></div>
+        <div class="f"><label for="ag-tel">WhatsApp</label><input id="ag-tel" type="tel" autocomplete="tel" inputmode="tel" placeholder="(00) 00000-0000"></div>
+        <div class="f"><label for="ag-end">Endereço da obra</label><input id="ag-end" autocomplete="street-address" placeholder="Rua, número, bairro e cidade"></div>
+        <div class="f"><label for="ag-obs">Observações <span style="opacity:.7">(opcional)</span></label><textarea id="ag-obs" rows="3" maxlength="600" placeholder="O que você quer fazer ou reformar?"></textarea></div>
+        <div class="msg" id="ag-err" role="alert"></div>
+        <button class="btn" type="submit" id="ag-go">Confirmar agendamento</button>
+      </form>
+      <div id="ag-ok" hidden></div>
+    </div>
+  </div>
+</div></section>
+
 <section id="portfolio" style="background:var(--bg2)"><div class="wrap">
   <h2>Portfólio de <span>obras</span></h2>
   <p class="sub">Arraste o controle para comparar o antes e depois.</p>
@@ -269,7 +342,7 @@ footer a:hover{color:var(--or)}
 <footer id="contato"><div class="wrap">
   <div class="fg">
     <div><div class="logo" style="margin-bottom:10px;white-space:normal">EDM <b>Pedreiro</b> | Obras &amp; Acabamentos</div><p style="color:var(--mut);font-size:.93rem">Construção civil, reformas e acabamento com qualidade e prazo.</p></div>
-    <div><h4>Links rápidos</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#orcamento">Orçamento</a></li><li><a href="#portfolio">Portfólio</a></li></ul></div>
+    <div><h4>Links rápidos</h4><ul><li><a href="#sobre">Sobre</a></li><li><a href="#servicos">Serviços</a></li><li><a href="#orcamento">Orçamento</a></li><li><a href="#agendar">Agendar visita</a></li><li><a href="#portfolio">Portfólio</a></li></ul></div>
     <div><h4>Região de atendimento</h4><ul><li>Sua cidade e região</li><li>Atendimento em obras residenciais e comerciais</li></ul></div>
     <div><h4>Contato</h4><ul><li><a href="#" class="wl">WhatsApp: (22) 98100-8988</a></li><li>Seg a Sáb · 7h às 18h</li></ul></div>
   </div>
@@ -476,6 +549,128 @@ addEventListener("scroll",navTick,{passive:true}); navTick();
 /* animações de entrada */
 gsap.utils.toArray(".card,.stats div,.tst blockquote,details").forEach(el=>
   gsap.from(el,{y:30,opacity:0,duration:.7,scrollTrigger:{trigger:el,start:"top 90%"}}));
+</script>
+<script>
+/* Agendamento de visitas: só sábados, 09:00 às 15:00, blocos de 2h. Horários ocupados via Firebase (se configurado). */
+(function(){
+  var WA="5522981008988", SLOTS=["09:00","11:00","13:00"], END={"09:00":"11:00","11:00":"13:00","13:00":"15:00"}, MAXM=3, LEAD_H=2;
+  var g=function(s){return document.querySelector(s)};
+  var FB=window.EDM_FB||{}, fbOn=!!(FB.apiKey&&FB.projectId);
+  var BASE=fbOn?"https://firestore.googleapis.com/v1/projects/"+encodeURIComponent(FB.projectId)+"/databases/(default)/documents":"";
+  var KEY=encodeURIComponent(FB.apiKey||"");
+  var booked={}, selDate=null, selTime=null, now0=new Date(), view=new Date(now0.getFullYear(),now0.getMonth(),1);
+  var pad=function(n){return String(n).padStart(2,"0")};
+  var iso=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())};
+  var key=function(i,t){return i+"_"+t.replace(":","")};
+  var isOpen=function(i,t){return new Date(i+"T"+t+":00")-Date.now()>LEAD_H*3600000 && !booked[key(i,t)]};
+  var longDate=function(i){return new Date(i+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long",year:"numeric"})};
+  var shortDate=function(i){return new Date(i+"T12:00:00").toLocaleDateString("pt-BR")};
+  var esc=function(t){return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})};
+
+  g("#ag-alt").href="https://api.whatsapp.com/send?phone="+WA+"&text="+encodeURIComponent("Olá! Quero agendar uma visita para orçamento da minha obra, mas não consigo aos sábados. Entre em contato para ajustarmos o melhor horário e dia para realizar a minha visita.");
+
+  function loadBooked(){
+    if(!fbOn) return Promise.resolve();
+    var out={};
+    function page(tok){
+      return fetch(BASE+"/slots?pageSize=300&key="+KEY+(tok?"&pageToken="+encodeURIComponent(tok):"")).then(function(r){return r.ok?r.json():{}}).then(function(d){
+        (d.documents||[]).forEach(function(x){out[x.name.split("/").pop()]=1});
+        return d.nextPageToken?page(d.nextPageToken):null;
+      });
+    }
+    return page("").then(function(){booked=out}).catch(function(){});
+  }
+
+  function renderCal(){
+    var y=view.getFullYear(), m=view.getMonth(), first=new Date(y,m,1), days=new Date(y,m+1,0).getDate();
+    g("#cal-title").textContent=first.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+    g("#cal-prev").disabled=(y===now0.getFullYear()&&m<=now0.getMonth());
+    var mx=new Date(now0.getFullYear(),now0.getMonth()+MAXM,1);
+    g("#cal-next").disabled=(first>=mx);
+    var h="Dom Seg Ter Qua Qui Sex Sáb".split(" ").map(function(w){return '<div class="dw">'+w+'</div>'}).join("");
+    for(var b=0;b<first.getDay();b++) h+='<div class="d blank"></div>';
+    for(var d=1;d<=days;d++){
+      var dt=new Date(y,m,d), i=iso(dt);
+      if(dt.getDay()===6){
+        var ok=SLOTS.some(function(t){return isOpen(i,t)});
+        h+='<button type="button" class="d sat'+(ok?'':' off')+(i===selDate?' sel':'')+'" data-d="'+i+'"'+(ok?'':' disabled')+' aria-label="'+longDate(i)+(ok?'':' (indisponível)')+'">'+d+'</button>';
+      } else h+='<div class="d">'+d+'</div>';
+    }
+    g("#cal-grid").innerHTML=h;
+  }
+  function renderSlots(){
+    g("#ag-slots").innerHTML=SLOTS.map(function(t){
+      var ok=isOpen(selDate,t);
+      return '<button type="button" class="slot'+(t===selTime?' sel':'')+'" data-t="'+t+'"'+(ok?'':' disabled')+'>'+t+'<small>até '+END[t]+'</small></button>';
+    }).join("");
+  }
+  function showForm(){
+    g("#ag-empty").hidden=true; g("#ag-ok").hidden=true; g("#ag-form").hidden=false;
+    g("#ag-date").textContent=longDate(selDate); g("#ag-err").textContent=""; renderSlots();
+  }
+
+  g("#cal-prev").addEventListener("click",function(){view=new Date(view.getFullYear(),view.getMonth()-1,1);renderCal()});
+  g("#cal-next").addEventListener("click",function(){view=new Date(view.getFullYear(),view.getMonth()+1,1);renderCal()});
+  g("#cal-grid").addEventListener("click",function(e){
+    var b=e.target.closest("button.sat"); if(!b||b.disabled) return;
+    selDate=b.dataset.d; selTime=null; renderCal(); showForm();
+    if(window.matchMedia("(max-width:860px)").matches) g("#ag-form").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+  g("#ag-slots").addEventListener("click",function(e){
+    var b=e.target.closest("button.slot"); if(!b||b.disabled) return;
+    selTime=b.dataset.t; renderSlots(); g("#ag-err").textContent="";
+  });
+
+  function post(path,fields){
+    return fetch(BASE+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fields:fields})});
+  }
+  var S=function(v){return {stringValue:String(v)}};
+
+  g("#ag-form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var err=g("#ag-err"), nome=g("#ag-nome").value.trim(), tel=g("#ag-tel").value.trim(), end=g("#ag-end").value.trim(), obs=g("#ag-obs").value.trim();
+    if(!selDate) return err.textContent="Escolha um sábado no calendário.";
+    if(!selTime) return err.textContent="Escolha um horário.";
+    if(!nome) return err.textContent="Informe seu nome.";
+    if(tel.replace(/\D/g,"").length<10) return err.textContent="Informe um WhatsApp válido, com DDD.";
+    if(!end) return err.textContent="Informe o endereço da obra.";
+    err.textContent="";
+    var btn=g("#ag-go"); btn.disabled=true; btn.textContent="Reservando...";
+    var d=selDate, t=selTime, k=key(d,t);
+    var msg="Olá! Acabei de agendar uma visita para orçamento pelo site do EDM Pedreiro | Obras & Acabamentos.\n\n"+
+      "Nome: "+nome+"\nWhatsApp: "+tel+"\nEndereço da obra: "+end+"\nData: "+longDate(d)+"\nHorário: "+t+" às "+END[t]+
+      "\nObservações: "+(obs||"Não informado");
+    function done(){
+      booked[k]=1; renderCal();
+      g("#ag-form").hidden=true;
+      var ok=g("#ag-ok"); ok.hidden=false;
+      ok.innerHTML='<h3>'+(fbOn?'Horário reservado!':'Falta só um passo')+'</h3>'+
+        '<div class="okbox"><b>'+esc(longDate(d))+'</b><br>Das '+t+' às '+END[t]+'<br>'+esc(end)+'</div>'+
+        '<p style="color:var(--mut);font-size:.9rem;margin-bottom:14px">'+(fbOn?'Envie a confirmação pelo WhatsApp para eu já ficar com seus dados.':'Envie pelo WhatsApp para eu confirmar o horário com você.')+'</p>'+
+        '<a class="btn wpp" target="_blank" rel="noopener" href="https://api.whatsapp.com/send?phone='+WA+'&text='+encodeURIComponent(msg)+'">Enviar confirmação pelo WhatsApp</a>'+
+        '<button class="btn ghost" type="button" id="ag-new">Fazer outro agendamento</button>';
+      g("#ag-new").addEventListener("click",function(){
+        ["#ag-nome","#ag-tel","#ag-end","#ag-obs"].forEach(function(s){g(s).value=""});
+        selDate=null; selTime=null; ok.hidden=true; g("#ag-empty").hidden=false; renderCal();
+      });
+      btn.disabled=false; btn.textContent="Confirmar agendamento";
+    }
+    function fail(m){ err.textContent=m; btn.disabled=false; btn.textContent="Confirmar agendamento"; }
+    if(!fbOn){ done(); return; }
+    var now=new Date().toISOString();
+    fetch(BASE+"/slots?documentId="+encodeURIComponent(k)+"&key="+KEY,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({fields:{data:S(d),hora:S(t),criadoEm:{timestampValue:now}}})})
+    .then(function(r){
+      if(r.status===409){ booked[k]=1; selTime=null; renderCal(); renderSlots(); return fail("Esse horário acabou de ser reservado por outra pessoa. Escolha outro horário."); }
+      if(!r.ok) return fail("Não foi possível reservar agora. Tente novamente ou use o botão de WhatsApp abaixo do calendário.");
+      return post("/visitas?key="+KEY,{chave:S(k),data:S(d),hora:S(t),nome:S(nome),whatsapp:S(tel),endereco:S(end),observacao:S(obs),mensagem:S(msg),status:S("novo"),criadoEm:{timestampValue:now}})
+        .catch(function(){}).then(done);
+    }).catch(function(){ fail("Sem conexão no momento. Tente novamente ou use o botão de WhatsApp abaixo do calendário."); });
+  });
+
+  renderCal();
+  loadBooked().then(function(){ renderCal(); if(selDate&&!g("#ag-form").hidden) renderSlots(); });
+})();
 </script>
 </body>
 </html>

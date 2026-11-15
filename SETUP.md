@@ -26,6 +26,26 @@ service cloud.firestore {
       allow read, update, delete: if request.auth != null
         && request.auth.token.email == 'SEU_EMAIL_AQUI';
     }
+
+    // Agendamento de visitas
+    // "slots" guarda só o horário ocupado (sem dados pessoais) e é público para o site mostrar o que está lotado.
+    // O id do documento (ex.: 2026-11-21_0900) impede dois clientes de reservarem o mesmo horário.
+    match /slots/{slot} {
+      allow read: if true;
+      allow create: if slot.matches('^20[0-9]{2}-[01][0-9]-[0-3][0-9]_(0900|1100|1300)$')
+        && request.resource.data.keys().hasOnly(['data','hora','criadoEm']);
+      allow delete: if request.auth != null && request.auth.token.email == 'SEU_EMAIL_AQUI';
+    }
+    // "visitas" tem os dados do cliente: qualquer visitante cria, só o profissional lê, edita e apaga
+    match /visitas/{id} {
+      allow create: if request.resource.data.keys().hasOnly(
+          ['chave','data','hora','nome','whatsapp','endereco','observacao','mensagem','status','criadoEm'])
+        && request.resource.data.nome is string && request.resource.data.nome.size() < 200
+        && request.resource.data.mensagem is string && request.resource.data.mensagem.size() < 3000
+        && request.resource.data.status == 'novo';
+      allow read, update, delete: if request.auth != null
+        && request.auth.token.email == 'SEU_EMAIL_AQUI';
+    }
   }
 }
 ```
@@ -36,6 +56,8 @@ service cloud.firestore {
 3. Aba **Configurações > Ações do usuário**: desmarque **Ativar criação (cadastro)** para ninguém mais criar conta.
 
 ## 4. Usar
+O painel tem duas abas: **Orçamentos** e **Visitas agendadas** (as visitas marcadas no calendário do site). Ao cancelar uma visita, o horário volta a ficar livre no site.
+
 Abra `https://SEU-SITE/painel.html`, entre com o e-mail e a senha. Cada clique em
 "Enviar Solicitação via WhatsApp" cria um pedido no painel na hora, mesmo que o cliente
 desista de enviar a mensagem. O painel atualiza sozinho a cada 1 minuto.
