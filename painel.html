@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Painel | EDM Pedreiro</title>
+<title>Painel | EDM Construção</title>
 <style>
 :root{--bg:#1f2226;--bg2:#2a2e33;--bg3:#34393f;--or:#ff7a1a;--or2:#e5640a;--wh:#fff;--mut:#b4bac1;--ok:#7be29a;--bad:#ff9b9b}
 *,*::before,*::after{box-sizing:border-box;margin:0}
@@ -72,7 +72,7 @@ header .t{font-weight:800;margin-right:auto}
 
 <div id="login">
   <form class="box" id="lf" autocomplete="on">
-    <h1>EDM <b class="or">Pedreiro</b></h1>
+    <h1>EDM <b class="or">Construção</b></h1>
     <p>Painel do profissional. Acesso restrito.</p>
     <div class="f"><label for="em">E-mail</label><input id="em" type="email" autocomplete="username" required></div>
     <div class="f"><label for="pw">Senha</label><input id="pw" type="password" autocomplete="current-password" required></div>
@@ -83,7 +83,7 @@ header .t{font-weight:800;margin-right:auto}
 
 <div id="app">
   <header><div class="wrap">
-    <span class="t">EDM <b class="or">Pedreiro</b> · Painel</span>
+    <span class="t">EDM <b class="or">Construção</b> · Painel</span>
     <button class="btn ghost sm" id="reload" type="button">Atualizar</button>
     <button class="btn ghost sm" id="out" type="button">Sair</button>
   </div></header>
@@ -172,7 +172,7 @@ const fmtDate = iso => { try { return new Date(iso).toLocaleString("pt-BR", { ti
 const digits = t => String(t || "").replace(/\D/g, "");
 function waLink(l) {
   let n = digits(l.whatsapp); if (n.length <= 11) n = "55" + n;
-  return "https://wa.me/" + n + "?text=" + encodeURIComponent("Olá, " + (l.nome || "") + "! Aqui é do EDM Pedreiro. Vi sua solicitação de orçamento pelo site e vou te ajudar.");
+  return "https://wa.me/" + n + "?text=" + encodeURIComponent("Olá, " + (l.nome || "") + "! Aqui é do EDM Construção. Vi sua solicitação de orçamento pelo site e vou te ajudar.");
 }
 function servicosHtml(l) {
   const sv = Array.isArray(l.servicos) ? l.servicos : [];
@@ -236,7 +236,7 @@ function renderVisitas() {
       </div>
       ${v.observacao ? `<div class="obj"><small style="color:var(--mut)">OBSERVAÇÕES</small><br>${esc(v.observacao)}</div>` : ""}
       <div class="acts">
-        <a class="btn wa sm" href="${esc(waLink({ nome: v.nome, whatsapp: v.whatsapp }).replace(/text=.*/, "text=" + encodeURIComponent("Olá, " + v.nome + "! Aqui é do EDM Pedreiro. Confirmando sua visita em " + vLabel(v.data) + ", às " + v.hora + ".")))}" target="_blank" rel="noopener">Confirmar pelo WhatsApp</a>
+        <a class="btn wa sm" href="${esc(waLink({ nome: v.nome, whatsapp: v.whatsapp }).replace(/text=.*/, "text=" + encodeURIComponent("Olá, " + v.nome + "! Aqui é do EDM Construção. Confirmando sua visita em " + vLabel(v.data) + ", às " + v.hora + ".")))}" target="_blank" rel="noopener">Confirmar pelo WhatsApp</a>
         <button class="btn ghost sm" data-a="copy" type="button">Copiar mensagem</button>
         <button class="btn ghost sm" data-a="toggle" type="button">${done ? "Marcar como agendada" : "Marcar como realizada"}</button>
         <button class="btn danger sm" data-a="del" type="button">Cancelar visita</button>
