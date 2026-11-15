@@ -384,7 +384,10 @@ $("#send").addEventListener("click",()=>{
   $$("#cats input").forEach(i=>i.checked=false);
   $$(".panel input, .panel select, .panel textarea").forEach(i=>{ if(i.type==="radio"||i.type==="checkbox") i.checked=false; else i.value=""; });
   refresh();
-  setTimeout(()=>{ location.hash="orcamento"; location.reload(); },1800);
+  setTimeout(()=>{
+    if(window.top===window){ location.hash="orcamento"; location.reload(); }   /* site publicado: recarrega */
+    else { err.textContent=""; err.className=""; $("#orcamento").scrollIntoView(); }   /* pré-visualização em quadro: só limpa (recarregar deixa a tela branca) */
+  },1800);
 });
 
 /* links de WhatsApp gerais */
