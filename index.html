@@ -329,8 +329,8 @@ const CATS = [
   ["Caixas de inspeção e esgoto","Montagem de caixas de passagem e gordura","🚰"]]]
 ];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-$("#cats").innerHTML = CATS.map((c,i)=>`<details ${i==0?"open":""}><summary><span>${c[0]} ${c[1]}<span class="cnt"></span></span></summary>${
- c[2].map(o=>`<label class="opt"><input type="checkbox" data-cat="${c[1]}" value="${o[0]}"><span><b>${o[2]} ${o[0]}</b><small>${o[1]}</small></span></label>`).join("")}</details>`).join("");
+$("#cats").innerHTML = CATS.map((c,i)=>`<details ${i==0?"open":""}><summary><span>${c[1]}<span class="cnt"></span></span></summary>${
+ c[2].map(o=>`<label class="opt"><input type="checkbox" data-cat="${c[1]}" value="${o[0]}"><span><b>${o[0]}</b><small>${o[1]}</small></span></label>`).join("")}</details>`).join("");
 
 function refresh(){
   const all=$$("#cats input:checked");
@@ -372,7 +372,7 @@ $("#send").addEventListener("click",()=>{
     "\nMetragem: "+m2.toLocaleString("pt-BR")+" m²\nLocal: "+loc+"\n\nSoluções de interesse:\n";
   CATS.forEach(c=>{
     const its=sel.filter(i=>i.dataset.cat===c[1]);
-    if(its.length) msg+="\n"+c[0]+" "+c[1]+"\n"+its.map(i=>"• "+i.value).join("\n")+"\n";
+    if(its.length) msg+="\n*"+c[1]+"*\n"+its.map(i=>"• "+i.value).join("\n")+"\n";
   });
   msg+="\nObjetivo: "+(obs||"Não informado")+"\nPrazo para começar: "+prazo;
   const url="https://api.whatsapp.com/send?phone="+WA_NUMBER+"&text="+encodeURIComponent(msg);
