@@ -138,9 +138,6 @@ fieldset.pz input{width:18px;height:18px;accent-color:var(--or);flex:none;margin
 /* DIFERENCIAIS */
 .dif .card{padding:22px}
 .dif .ic{font-size:1.8rem;margin-bottom:8px}
-.tst{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:34px}
-.tst blockquote{background:var(--bg);border-left:4px solid var(--or);padding:18px;border-radius:10px;font-size:.93rem;color:var(--mut)}
-.tst cite{display:block;margin-top:8px;color:var(--wh);font-style:normal;font-weight:600}
 /* RODAPÉ */
 footer{background:linear-gradient(180deg,rgba(21,23,26,.82),rgba(21,23,26,.92)),var(--foto) center 70%/cover no-repeat;padding:60px 0 30px}
 .fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px}
@@ -337,11 +334,6 @@ footer a:hover{color:var(--or)}
     <div class="card"><div class="ic">🧹</div><h3>Obra limpa</h3><p>Organização diária e entulho removido, respeitando sua casa.</p></div>
     <div class="card"><div class="ic">⏱️</div><h3>Cumprimento de prazos</h3><p>Cronograma realista e avisos a cada etapa concluída.</p></div>
     <div class="card"><div class="ic">📐</div><h3>Precisão técnica</h3><p>Prumo, nível e esquadro em todas as etapas da obra.</p></div>
-  </div>
-  <div class="tst">
-    <blockquote>“Fez a reforma da cozinha no prazo e deixou tudo limpo. Recomendo.”<cite>Cliente — exemplo</cite></blockquote>
-    <blockquote>“Orçamento certinho, sem gasto extra no final. Acabamento impecável.”<cite>Cliente — exemplo</cite></blockquote>
-    <blockquote>“Resolveu a infiltração que outros não acertaram. Serviço de confiança.”<cite>Cliente — exemplo</cite></blockquote>
   </div>
 </div></section>
 
@@ -556,7 +548,7 @@ document.querySelectorAll("nav ul a").forEach(a=>a.addEventListener("click",()=>
 addEventListener("scroll",navTick,{passive:true}); navTick();
 
 /* animações de entrada */
-gsap.utils.toArray(".card,.stats div,.tst blockquote,details").forEach(el=>
+gsap.utils.toArray(".card,.stats div,details").forEach(el=>
   gsap.from(el,{y:30,opacity:0,duration:.7,scrollTrigger:{trigger:el,start:"top 90%"}}));
 </script>
 <script>
