@@ -61,3 +61,5 @@ O painel tem duas abas: **Orçamentos** e **Visitas agendadas** (as visitas marc
 Abra `https://SEU-SITE/painel.html`, entre com o e-mail e a senha. Cada clique em
 "Enviar Solicitação via WhatsApp" cria um pedido no painel na hora, mesmo que o cliente
 desista de enviar a mensagem. O painel atualiza sozinho a cada 1 minuto.
+
+Ao cancelar uma visita pelo painel, o registro é mantido como **Cancelada**, o horário é liberado e o WhatsApp abre uma conversa com o cliente e a mensagem de desmarcação preenchida. Para concluir o envio, o profissional ainda precisa tocar em **Enviar** no WhatsApp. Se o navegador bloquear a nova aba, use o botão **Avisar cancelamento no WhatsApp** no histórico de visitas.

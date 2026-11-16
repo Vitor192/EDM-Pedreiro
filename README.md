@@ -30,7 +30,7 @@ Site institucional e de captação de clientes da **EDM Construção**, empresa 
 **Painel do profissional (`painel.html`)**
 - Acesso restrito com e-mail e senha.
 - Aba **Orçamentos:** todos que clicaram em enviar o orçamento, mesmo quem não concluiu o envio no WhatsApp.
-- Aba **Visitas agendadas:** próximas e anteriores, com opção de confirmar pelo WhatsApp, marcar como realizada ou cancelar (o horário volta a ficar livre).
+- Aba **Visitas agendadas:** próximas e anteriores, com opção de confirmar pelo WhatsApp, marcar como realizada ou cancelar. Ao cancelar, o horário é liberado, o registro fica no histórico e uma mensagem de desmarcação é preparada no WhatsApp.
 - Busca, filtros e destaque para pedidos urgentes.
 
 ## Tecnologias

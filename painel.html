@@ -170,9 +170,10 @@ async function load() {
 /* ---------- tela ---------- */
 const fmtDate = iso => { try { return new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } };
 const digits = t => String(t || "").replace(/\D/g, "");
-function waLink(l) {
+function waLink(l, message) {
   let n = digits(l.whatsapp); if (n.length <= 11) n = "55" + n;
-  return "https://wa.me/" + n + "?text=" + encodeURIComponent("Olá, " + (l.nome || "") + "! Aqui é do EDM Construção. Vi sua solicitação de orçamento pelo site e vou te ajudar.");
+  const text = message || ("Olá, " + (l.nome || "") + "! Aqui é do EDM Construção. Vi sua solicitação de orçamento pelo site e vou te ajudar.");
+  return "https://wa.me/" + n + "?text=" + encodeURIComponent(text);
 }
 function servicosHtml(l) {
   const sv = Array.isArray(l.servicos) ? l.servicos : [];
@@ -214,9 +215,13 @@ function renderLeads() {
   }).join("") : '<div class="empty">Nenhuma solicitação por aqui ainda.</div>';
 }
 const todayIso = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
-const isProx = v => v.status !== "realizada" && String(v.data) >= todayIso();
+const isProx = v => v.status !== "realizada" && v.status !== "cancelada" && String(v.data) >= todayIso();
 const vLabel = d => { try { return new Date(d + "T12:00:00").toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }); } catch (e) { return d; } };
 const ENDH = { "09:00": "11:00", "11:00": "13:00", "13:00": "15:00" };
+function cancelMessage(v) {
+  return "Olá, " + (v.nome || "") + "! Aqui é da EDM Construção. Preciso desmarcar nossa visita para orçamento em " +
+    vLabel(v.data) + ", das " + v.hora + " às " + (ENDH[v.hora] || "") + ". Desculpe pelo transtorno. Podemos combinar outro horário por aqui?";
+}
 function renderVisitas() {
   const q = $("#q").value.trim().toLowerCase();
   let rows = visitas.filter(v => (filter === "prox" ? isProx(v) : !isProx(v)) &&
@@ -224,10 +229,10 @@ function renderVisitas() {
   if (filter !== "prox") rows = rows.slice().reverse();
   $("#cnt").textContent = rows.length + " visita(s)";
   $("#list").innerHTML = rows.length ? rows.map(v => {
-    const done = v.status === "realizada";
-    return `<article class="lead ${done ? "done" : ""}" data-id="${esc(v.id)}">
+    const done = v.status === "realizada", cancelled = v.status === "cancelada";
+    return `<article class="lead ${done || cancelled ? "done" : ""}" data-id="${esc(v.id)}">
       <div class="top"><span class="vdate">${esc(vLabel(v.data))}</span>
-        <span class="tag ${done ? "ok" : "new"}">${done ? "Realizada" : "Agendada"}</span>
+        <span class="tag ${done ? "ok" : cancelled ? "" : "new"}">${done ? "Realizada" : cancelled ? "Cancelada" : "Agendada"}</span>
         <span class="when">${esc(v.hora)} às ${esc(ENDH[v.hora] || "")}</span></div>
       <div class="grid">
         <div><small>Cliente</small>${esc(v.nome)}</div>
@@ -236,10 +241,11 @@ function renderVisitas() {
       </div>
       ${v.observacao ? `<div class="obj"><small style="color:var(--mut)">OBSERVAÇÕES</small><br>${esc(v.observacao)}</div>` : ""}
       <div class="acts">
-        <a class="btn wa sm" href="${esc(waLink({ nome: v.nome, whatsapp: v.whatsapp }).replace(/text=.*/, "text=" + encodeURIComponent("Olá, " + v.nome + "! Aqui é do EDM Construção. Confirmando sua visita em " + vLabel(v.data) + ", às " + v.hora + ".")))}" target="_blank" rel="noopener">Confirmar pelo WhatsApp</a>
+        ${cancelled ? `<a class="btn wa sm" href="${esc(waLink({ nome: v.nome, whatsapp: v.whatsapp }, cancelMessage(v)))}" target="_blank" rel="noopener">Avisar cancelamento no WhatsApp</a>` : `
+        <a class="btn wa sm" href="${esc(waLink({ nome: v.nome, whatsapp: v.whatsapp }, "Olá, " + v.nome + "! Aqui é do EDM Construção. Confirmando sua visita em " + vLabel(v.data) + ", das " + v.hora + " às " + (ENDH[v.hora] || "") + "."))}" target="_blank" rel="noopener">Confirmar pelo WhatsApp</a>
         <button class="btn ghost sm" data-a="copy" type="button">Copiar mensagem</button>
         <button class="btn ghost sm" data-a="toggle" type="button">${done ? "Marcar como agendada" : "Marcar como realizada"}</button>
-        <button class="btn danger sm" data-a="del" type="button">Cancelar visita</button>
+        ${done ? "" : `<button class="btn danger sm" data-a="cancel" type="button">Cancelar e avisar no WhatsApp</button>`}`}
       </div></article>`;
   }).join("") : '<div class="empty">Nenhuma visita por aqui.</div>';
 }
@@ -302,11 +308,31 @@ $("#list").addEventListener("click", async e => {
       const st = (l.status === "atendido" || l.status === "realizada") ? "novo" : (mode === "visitas" ? "realizada" : "atendido");
       await api("/" + coll + "/" + encodeURIComponent(l.id) + "?updateMask.fieldPaths=status", { method: "PATCH", body: JSON.stringify({ fields: { status: { stringValue: st } } }) });
       l.status = st; render();
+    } else if (a === "cancel" && mode === "visitas") {
+      const waWindow = window.open("about:blank", "_blank");
+      if (!confirm("Cancelar a visita de " + (l.nome || "este cliente") + " em " + vLabel(l.data) + ", às " + l.hora + "? O horário será liberado e uma mensagem ficará pronta no WhatsApp.")) {
+        if (waWindow) waWindow.close();
+        return;
+      }
+      try {
+        await api("/visitas/" + encodeURIComponent(l.id) + "?updateMask.fieldPaths=status", { method: "PATCH", body: JSON.stringify({ fields: { status: { stringValue: "cancelada" } } }) });
+        l.status = "cancelada";
+        let slotError = false;
+        if (l.chave) { try { await api("/slots/" + encodeURIComponent(l.chave), { method: "DELETE" }); } catch (e) { slotError = true; } }
+        filter = "ant";
+        document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x.dataset.f === filter));
+        render();
+        if (waWindow) waWindow.location.href = waLink({ nome: l.nome, whatsapp: l.whatsapp }, cancelMessage(l));
+        if (slotError) showErr("Visita cancelada, mas não consegui liberar o horário. Confira as regras do Firestore.", true);
+        else if (!waWindow) showErr("Visita cancelada e horário liberado. O navegador bloqueou o WhatsApp; use o botão na visita cancelada para abrir a mensagem.", true);
+      } catch (err) {
+        if (waWindow && !waWindow.closed) waWindow.close();
+        throw err;
+      }
     } else if (a === "del") {
-      if (!confirm((mode === "visitas" ? "Cancelar a visita de " : "Excluir a solicitação de ") + (l.nome || "este cliente") + "? Não dá para desfazer.")) return;
+      if (!confirm("Excluir a solicitação de " + (l.nome || "este cliente") + "? Não dá para desfazer.")) return;
       await api("/" + coll + "/" + encodeURIComponent(l.id), { method: "DELETE" });
-      if (mode === "visitas" && l.chave) { try { await api("/slots/" + encodeURIComponent(l.chave), { method: "DELETE" }); } catch (e) {} }  /* libera o horário */
-      if (mode === "visitas") visitas = visitas.filter(x => x !== l); else leads = leads.filter(x => x !== l);
+      leads = leads.filter(x => x !== l);
       render();
     }
   } catch (err) { showErr("Não foi possível concluir a ação (" + err.message + ")."); }
