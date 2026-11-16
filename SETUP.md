@@ -1,16 +1,13 @@
-# Configuração do painel do profissional (uma vez só, ~10 min, grátis)
+# Configuração do painel do profissional
 
 O painel (`painel.html`) usa o Firebase do Google para guardar os pedidos e para o login com e-mail e senha.
 Sem isso, o site continua funcionando normal e envia o orçamento pelo WhatsApp, mas **não registra** os pedidos no painel.
 
-## 1. Criar o projeto
-1. Acesse https://console.firebase.google.com e clique em **Adicionar projeto** (nome: `edm-pedreiro`; pode desativar o Google Analytics).
-2. Em **Visão geral do projeto > ⚙ Configurações do projeto > Geral**, em "Seus apps", clique em **</> Web**, dê um apelido e registre.
-3. Copie `apiKey` e `projectId` para o arquivo `config.js` deste projeto.
+## 1. Projeto e aplicativo
+O projeto Firebase `edm-pedreiro` e o app web `EDM Construção Site` já foram criados. O arquivo `config.js` contém o `apiKey` e o `projectId` públicos do app. A autorização dos dados é feita pelas regras do Firestore abaixo.
 
 ## 2. Banco de dados
-1. **Criação > Firestore Database > Criar banco de dados** (modo produção, região `southamerica-east1` / São Paulo).
-2. Aba **Regras**: cole o texto abaixo, troque `SEU_EMAIL_AQUI` pelo e-mail do profissional e clique em **Publicar**.
+O Cloud Firestore já está criado em modo de produção na região `southamerica-east1` (São Paulo), e as regras abaixo já foram publicadas. O acesso administrativo está restrito a `edmpedreiros@gmail.com`.
 
 ```
 rules_version = '2';
@@ -24,7 +21,7 @@ service cloud.firestore {
         && request.resource.data.mensagem is string && request.resource.data.mensagem.size() < 6000
         && request.resource.data.status == 'novo';
       allow read, update, delete: if request.auth != null
-        && request.auth.token.email == 'SEU_EMAIL_AQUI';
+        && request.auth.token.email == 'edmpedreiros@gmail.com';
     }
 
     // Agendamento de visitas
@@ -34,7 +31,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if slot.matches('^20[0-9]{2}-[01][0-9]-[0-3][0-9]_(0900|1100|1300)$')
         && request.resource.data.keys().hasOnly(['data','hora','criadoEm']);
-      allow delete: if request.auth != null && request.auth.token.email == 'SEU_EMAIL_AQUI';
+      allow delete: if request.auth != null && request.auth.token.email == 'edmpedreiros@gmail.com';
     }
     // "visitas" tem os dados do cliente: qualquer visitante cria, só o profissional lê, edita e apaga
     match /visitas/{id} {
@@ -44,16 +41,14 @@ service cloud.firestore {
         && request.resource.data.mensagem is string && request.resource.data.mensagem.size() < 3000
         && request.resource.data.status == 'novo';
       allow read, update, delete: if request.auth != null
-        && request.auth.token.email == 'SEU_EMAIL_AQUI';
+        && request.auth.token.email == 'edmpedreiros@gmail.com';
     }
   }
 }
 ```
 
 ## 3. Login do profissional
-1. **Criação > Authentication > Vamos começar > Método de login > E-mail/senha** → ativar.
-2. Aba **Usuários > Adicionar usuário**: e-mail e senha que o profissional vai usar.
-3. Aba **Configurações > Ações do usuário**: desmarque **Ativar criação (cadastro)** para ninguém mais criar conta.
+O provedor E-mail/senha está ativado e o cadastro público está desabilitado. Falta criar o usuário em **Authentication > Usuários > Adicionar usuário**: use `edmpedreiros@gmail.com` e defina uma senha nova e exclusiva diretamente no Firebase Console; não a compartilhe pelo chat.
 
 ## 4. Usar
 O painel tem duas abas: **Orçamentos** e **Visitas agendadas** (as visitas marcadas no calendário do site). Ao cancelar uma visita, o horário volta a ficar livre no site.
